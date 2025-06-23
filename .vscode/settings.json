@@ -1,3 +1,9 @@
 {
-  "cSpell.words": ["Navigations"]
+  "cSpell.words": ["Navigations"],
+  "eslint.rules.customizations": [
+    {
+      "rule": "@typescript-eslint/no-unused-vars",
+      "severity": "off"
+    }
+  ]
 }
