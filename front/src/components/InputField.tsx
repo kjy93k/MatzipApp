@@ -1,4 +1,9 @@
-import React, { useRef } from 'react';
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import {
   Dimensions,
   Pressable,
@@ -18,17 +23,17 @@ interface InputFieldProps extends TextInputProps {
 
 const deviceHeight = Dimensions.get('screen').height;
 
-const InputField = ({
-  disabled = false,
-  error,
-  touched,
-  ...props
-}: InputFieldProps) => {
+const InputField = (
+  { disabled = false, error, touched, ...props }: InputFieldProps,
+  ref?: ForwardedRef<TextInput>,
+) => {
   const inputRef = useRef<TextInput | null>(null);
 
   const handlePressInput = () => {
     inputRef.current?.focus();
   };
+
+  useImperativeHandle(ref, () => inputRef.current as TextInput);
 
   return (
     <Pressable onPress={handlePressInput}>
@@ -80,4 +85,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InputField;
+export default forwardRef(InputField);

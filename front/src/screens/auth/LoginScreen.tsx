@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { SafeAreaView, StyleSheet, TextInput, View } from 'react-native';
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import useForm from '../../hooks/useForm';
@@ -8,6 +8,7 @@ import { validateLogin } from '../../\butils';
 interface LoginScreenProps {}
 
 const LoginScreen = ({}: LoginScreenProps) => {
+  const passwordInputRef = useRef<TextInput | null>(null);
   const login = useForm({
     initialValue: {
       email: '',
@@ -22,17 +23,22 @@ const LoginScreen = ({}: LoginScreenProps) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.inputContainer}>
         <InputField
+          autoFocus
           placeholder="이메일"
-          // error={login.errors.email} // login.errors에서 getTextInputProps로 이동
-          // touched={login.touched.email} // login.touched에서 getTextInputProps로 이동
           inputMode="email"
+          returnKeyType="next"
+          submitBehavior="submit" // next키로 인풋 포커스 이동 시 키보드 고정
+          onSubmitEditing={() => passwordInputRef.current?.focus()} // 다음 인풋 포커스
           {...login.getTextInputProps('email')}
         />
         <InputField
+          ref={passwordInputRef}
           placeholder="비밀번호"
-          // error={login.errors.password} // login.errors에서 getTextInputProps로 이동
-          // touched={login.touched.password} // login.touched에서 getTextInputProps로 이동
+          returnKeyType="join"
+          submitBehavior="submit"
           secureTextEntry
+          textContentType="oneTimeCode"
+          onSubmitEditing={handleSubmit}
           {...login.getTextInputProps('password')}
         />
       </View>
