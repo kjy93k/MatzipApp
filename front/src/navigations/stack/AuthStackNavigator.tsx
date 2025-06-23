@@ -35,6 +35,7 @@ const AuthStackNavigator = () => {
         name={authNavigations.AUTH_HOME}
         component={AuthHomeScreen}
         options={{
+          headerTitle: '',
           headerShown: false,
         }}
       />
