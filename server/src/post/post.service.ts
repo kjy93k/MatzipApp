@@ -7,6 +7,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './post.entity';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class PostService {
@@ -15,10 +16,11 @@ export class PostService {
     private postRepository: Repository<Post>,
   ) {}
 
-  async getAllMarkers() {
+  async getAllMarkers(user: User) {
     try {
       const markers = await this.postRepository
         .createQueryBuilder('post')
+        .where('post.userId = :userId', { userId: user.id })
         .select([
           'post.id',
           'post.latitude',
@@ -37,23 +39,25 @@ export class PostService {
     }
   }
 
-  getPosts(page: number) {
+  getPosts(page: number, user: User) {
     const perPage = 10;
     const offset = (page - 1) * perPage;
 
     return this.postRepository
       .createQueryBuilder('post')
+      .where('post.userId = :userId', { userId: user.id })
       .orderBy('post.date', 'DESC')
       .take(perPage)
       .skip(offset)
       .getMany();
   }
 
-  async getPostById(id: number) {
+  async getPostById(id: number, user: User) {
     try {
       const foundPost = await this.postRepository
         .createQueryBuilder('post')
-        .where('post.id = :id', { id })
+        .where('post.userId = :userId', { userId: user.id })
+        .andWhere('post.id = :id', { id })
         .getOne();
       if (!foundPost) {
         throw new NotFoundException('존재하지 않는 피드입니다.');
@@ -67,7 +71,7 @@ export class PostService {
     }
   }
 
-  async createPost(createPostDto: CreatePostDto) {
+  async createPost(createPostDto: CreatePostDto, user: User) {
     const {
       latitude,
       longitude,
@@ -89,6 +93,7 @@ export class PostService {
       description,
       date,
       score,
+      user,
     });
 
     try {
@@ -99,14 +104,17 @@ export class PostService {
         '장소를 추가하는 중 에러가 발생하였습니다.',
       );
     }
-    return post;
+
+    const { user: _, ...postWithoutUser } = post;
+    return postWithoutUser;
   }
 
   async updatePost(
     id: number,
     updatePostDto: Omit<CreatePostDto, 'latitude' | 'longitude' | 'address'>,
+    user: User,
   ) {
-    const post = await this.getPostById(id);
+    const post = await this.getPostById(id, user);
     const { title, description, color, date, score, imageUris } = updatePostDto;
 
     post.title = title;
@@ -125,13 +133,14 @@ export class PostService {
     return post;
   }
 
-  async deletePost(id: number) {
+  async deletePost(id: number, user: User) {
     try {
       const result = await this.postRepository
         .createQueryBuilder('post')
         .delete()
         .from(Post)
-        .where('id = :id', { id })
+        .where('userId = :userId', { userId: user.id })
+        .andWhere('id = :id', { id })
         .execute();
       if (result.affected === 0) {
         throw new NotFoundException('존재하지 않는 피드입니다.');
