@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { MarkerColor } from './marker-color.enum';
-import { ColumnNumericTransformer } from 'src/common/transformers/numeric.transformer';
+import { ColumnNumericTransformer } from 'src/@common/transformers/numeric.transformer';
 
 @Entity()
 export class Post extends BaseEntity {
