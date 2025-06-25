@@ -28,6 +28,8 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/serve-static": "^5.0.3",
     "@nestjs/typeorm": "^11.0.0",
+    "apple-signin-auth": "^2.0.0",
+    "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
