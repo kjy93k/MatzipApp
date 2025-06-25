@@ -7,6 +7,7 @@ import { ImageController } from './image/image.controller';
 import { ImageModule } from './image/image.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -23,10 +24,12 @@ import { join } from 'path';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/static', //임시
     }),
     PostModule,
     AuthModule,
     ImageModule,
+    FavoriteModule,
   ],
 
   providers: [ConfigService],
