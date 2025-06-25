@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 import { Post } from './post.entity';
 import { User } from 'src/auth/user.entity';
 import { Image } from 'src/image/image.entity';
@@ -49,6 +49,16 @@ export class PostService {
 
       return { ...rest, images: newImages };
     });
+  }
+
+  private async getPostsBaseQuery(
+    userId: number,
+  ): Promise<SelectQueryBuilder<Post>> {
+    return this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.images', 'image')
+      .where('post.userId = :userId', { userId })
+      .orderBy('post.date', 'DESC');
   }
 
   async getPosts(page: number, user: User) {
@@ -187,5 +197,55 @@ export class PostService {
         '장소를 삭제하는 중 에러가 발생하였습니다.',
       );
     }
+  }
+
+  async getPostsByMonth(year: number, month: number, user: User) {
+    const posts = await this.postRepository
+      .createQueryBuilder('post')
+      .where('post.userId = :userId', { userId: user.id })
+      .andWhere('extract(year from post.date) = :year', { year })
+      .andWhere('extract(month from post.date) = :month', { month })
+      .select([
+        'post.id AS id',
+        'post.title AS title',
+        'post.address AS address',
+        'EXTRACT(DAY FROM post.date) AS date',
+      ])
+      .getRawMany();
+
+    const groupPostsByDate = posts.reduce((acc, post) => {
+      const { id, title, address, date } = post;
+
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push({ id, title, address });
+
+      return acc;
+    }, {});
+
+    return groupPostsByDate;
+  }
+
+  async searchMyPostsByTitleAndAddress(
+    query: string,
+    page: number,
+    user: User,
+  ) {
+    const perPage = 10;
+    const offset = (page - 1) * perPage;
+    const queryBuilder = await this.getPostsBaseQuery(user.id);
+    const posts = await queryBuilder
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('post.title like :query', { query: `%${query}%` });
+          qb.orWhere('post.address like :query', { query: `%${query}%` });
+        }),
+      )
+      .skip(offset)
+      .take(perPage)
+      .getMany();
+
+    return this.getPostsWithOrderImages(posts);
   }
 }
