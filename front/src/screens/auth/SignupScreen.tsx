@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-import InputField from '../../components/InputField';
-import useForm from '../../hooks/useForm';
-import { validateSignup } from '../../\butils';
+import InputField from '@/components/InputField';
+import useForm from '@/hooks/useForm';
+import { validateSignup } from '@/\butils';
 import { TextInput } from 'react-native-gesture-handler';
-import CustomButton from '../../components/CustomButton';
-import useAuth from '../../hooks/queries/useAuth';
+import CustomButton from '@/components/CustomButton';
+import useAuth from '@/hooks/queries/useAuth';
 
 interface SignupScreenProps {}
 

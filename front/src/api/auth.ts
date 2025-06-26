@@ -1,6 +1,6 @@
-import { getEncryptStorage } from '../\butils/encryptStorage';
-import { Category, Profile } from '../types/domain';
-import $axios from './axios';
+import { getEncryptStorage } from '@/\butils/encryptStorage';
+import { Category, Profile } from '@/types/domain';
+import $axios from '@/api/axios';
 
 type RequestUser = {
   email: string;

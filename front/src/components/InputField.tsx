@@ -13,7 +13,7 @@ import {
   TextInputProps,
   View,
 } from 'react-native';
-import { colors } from '../constants';
+import { colors } from '@/constants';
 
 interface InputFieldProps extends TextInputProps {
   disabled?: boolean;

@@ -3,21 +3,21 @@ import { useEffect } from 'react';
 import {
   setEncryptStorage,
   removeEncryptStorage,
-} from '../../\butils/encryptStorage';
-import { setHeader, removeHeader } from '../../\butils/header';
+} from '@/\butils/encryptStorage';
+import { setHeader, removeHeader } from '@/\butils/header';
 import {
   postSignup,
   postLogin,
   getAccessToken,
   getProfile,
   logout,
-} from '../../api/auth';
-import queryClient from '../../api/queryClient';
-import { numbers, storageKeys, queryKeys } from '../../constants';
+} from '@/api/auth';
+import queryClient from '@/api/queryClient';
+import { numbers, storageKeys, queryKeys } from '@/constants';
 import {
   UseMutationCustomOptions,
   UseQueryCustomOptions,
-} from '../../types/common';
+} from '@/types/common';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 const useSignup = (mutationOptions?: UseMutationCustomOptions) => {
