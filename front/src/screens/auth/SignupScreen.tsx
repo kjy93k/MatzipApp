@@ -5,12 +5,14 @@ import useForm from '../../hooks/useForm';
 import { validateSignup } from '../../\butils';
 import { TextInput } from 'react-native-gesture-handler';
 import CustomButton from '../../components/CustomButton';
+import useAuth from '../../hooks/queries/useAuth';
 
 interface SignupScreenProps {}
 
 const SignupScreen = ({}: SignupScreenProps) => {
   const passwordInputRef = useRef<TextInput | null>(null);
   const passwordConfirmInputRef = useRef<TextInput | null>(null);
+  const { signupMutation, loginMutation } = useAuth();
 
   const signup = useForm({
     initialValue: {
@@ -21,7 +23,12 @@ const SignupScreen = ({}: SignupScreenProps) => {
     validate: validateSignup,
   });
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    const { passwordConfirm, ...signupData } = signup.values;
+    signupMutation.mutate(signupData, {
+      onSuccess: () => loginMutation.mutate(signupData),
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>

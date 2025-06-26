@@ -33,9 +33,9 @@ const postLogin = async ({
   return data;
 };
 
-type ResponseUserProfile = Profile & Category;
+type ResponseProfile = Profile & Category;
 
-const getProfile = async (): Promise<ResponseUserProfile> => {
+const getProfile = async (): Promise<ResponseProfile> => {
   const { data } = await $axios.get('/auth/me');
 
   return data;
@@ -43,6 +43,7 @@ const getProfile = async (): Promise<ResponseUserProfile> => {
 
 const getAccessToken = async (): Promise<ResponseToken> => {
   const refreshToken = await getEncryptStorage('refreshToken');
+
   const { data } = await $axios.get('/auth/refresh', {
     headers: {
       Authorization: `Bearer ${refreshToken}`,
@@ -57,4 +58,4 @@ const logout = async () => {
 };
 
 export { postSignup, postLogin, getProfile, getAccessToken, logout };
-export type { RequestUser, ResponseUserProfile, ResponseToken };
+export type { RequestUser, ResponseToken, ResponseProfile };
