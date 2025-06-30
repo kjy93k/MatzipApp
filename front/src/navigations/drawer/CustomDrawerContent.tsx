@@ -7,13 +7,18 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import React from 'react';
-import { Image, SafeAreaView, Text } from 'react-native';
+import { Image, Pressable, SafeAreaView, Text } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
-  const { getProfileQuery } = useAuth();
+  const { logoutMutation, getProfileQuery } = useAuth();
   const { email, nickname, imageUri, kakaoImageUri } =
     (getProfileQuery.data as Profile & Category) || {};
+
+  const handleLogout = () => {
+    logoutMutation.mutate(null);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <DrawerContentScrollView
@@ -40,6 +45,16 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         </View>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
+      <Pressable
+        style={{
+          alignItems: 'flex-end',
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+        }}
+        onPress={handleLogout}
+      >
+        <Text>로그아웃</Text>
+      </Pressable>
     </SafeAreaView>
   );
 };

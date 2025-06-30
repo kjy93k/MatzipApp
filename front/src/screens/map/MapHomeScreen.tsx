@@ -1,4 +1,4 @@
-import { colors } from '@/constants';
+import { alerts, colors, mapNavigations } from '@/constants';
 import useAuth from '@/hooks/queries/useAuth';
 import { MainDrawerParamList } from '@/navigations/drawer/MainDrawerNavigator';
 import { MapStackParamList } from '@/navigations/stack/MapStackNavigator';
@@ -9,7 +9,7 @@ import {
 } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, {
   Callout,
   LatLng,
@@ -37,8 +37,21 @@ const MapHomeScreen = () => {
   const navigation = useNavigation<Navigation>();
   const mapRef = useRef<MapView | null>(null);
   const { userLocation, isUserLocationError } = useUserLocation();
-  const [selectLocation, setSelectLocation] = useState<LatLng>();
+  const [selectLocation, setSelectLocation] = useState<LatLng | null>();
   usePermission('LOCATION');
+
+  const handlePressAddPost = () => {
+    if (!selectLocation) {
+      return Alert.alert(
+        alerts.NOT_SELECTED_LOCATION.TITLE,
+        alerts.NOT_SELECTED_LOCATION.DESCRIPTION,
+      );
+    }
+    navigation.navigate(mapNavigations.ADD_POST, {
+      location: selectLocation,
+    });
+    setSelectLocation(null);
+  };
 
   const handleLongPressMapView = ({ nativeEvent }: LongPressEvent) => {
     setSelectLocation(nativeEvent.coordinate);
@@ -87,6 +100,12 @@ const MapHomeScreen = () => {
         <Ionicons name="menu" color={colors.WHITE} size={24} />
       </Pressable>
       <View style={styles.buttonList}>
+        <Pressable
+          style={styles.mapButton}
+          onPress={() => handlePressAddPost()}
+        >
+          <MaterialIcons name="add" color={colors.WHITE} size={24} />
+        </Pressable>
         <Pressable
           style={styles.mapButton}
           onPress={() => handlePressUserLocation()}
