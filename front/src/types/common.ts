@@ -26,3 +26,5 @@ export type UseQueryCustomOptions<
   UseQueryOptions<TQueryFnData, ResponseError, TData, QueryKey>,
   'queryKey'
 >;
+
+export type ThemeMode = 'light' | 'dark';
