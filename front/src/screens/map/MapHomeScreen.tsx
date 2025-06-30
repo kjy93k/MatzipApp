@@ -14,6 +14,8 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useUserLocation from '@/hooks/useUserLocation';
 import usePermission from '@/hooks/usePermission';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type Navigation = CompositeNavigationProp<
   StackNavigationProp<MapStackParamList>,
@@ -54,14 +56,14 @@ const MapHomeScreen = () => {
         style={[styles.drawerButton, { top: inset.top || 20 }]}
         onPress={() => navigation.openDrawer()}
       >
-        <Text>서랍</Text>
+        <Ionicons name="menu" color={colors.WHITE} size={24} />
       </Pressable>
       <View style={styles.buttonList}>
         <Pressable
           style={styles.mapButton}
           onPress={() => handlePressUserLocation()}
         >
-          <Text>내 위치</Text>
+          <MaterialIcons name="my-location" color={colors.WHITE} size={24} />
         </Pressable>
       </View>
     </>
