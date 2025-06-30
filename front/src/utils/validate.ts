@@ -36,3 +36,19 @@ export const validateSignup = (
 
   return signupErrors;
 };
+
+export const validateAddPost = (values: {
+  title: string;
+  description?: string;
+}) => {
+  const errors = {
+    title: '',
+    description: '',
+  };
+
+  if (values.title.trim() === '') {
+    errors.title = '제목은 30자 이내로 입력해주세요.';
+  }
+
+  return errors;
+};
