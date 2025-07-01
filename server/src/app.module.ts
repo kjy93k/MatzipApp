@@ -24,7 +24,7 @@ import { FavoriteModule } from './favorite/favorite.module';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
-      serveRoot: '/static', //임시
+      serveRoot: '/', //임시
     }),
     PostModule,
     AuthModule,

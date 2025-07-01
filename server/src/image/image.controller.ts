@@ -1,7 +1,7 @@
 import {
   Controller,
   Post,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -36,7 +36,9 @@ export class ImageController {
     }),
   )
   @Post('/')
-  uploadImages(@UploadedFile() files: Express.Multer.File[]) {
+  uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
     const uris = files.map((file) => file.filename);
+
+    return uris;
   }
 }

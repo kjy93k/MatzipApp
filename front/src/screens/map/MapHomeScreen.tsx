@@ -40,6 +40,7 @@ const MapHomeScreen = () => {
   const [selectLocation, setSelectLocation] = useState<LatLng | null>();
   const { data: markers = [] } = useGetMarkers();
   usePermission('LOCATION');
+  const defaultRegionDelta = { latitudeDelta: 0.0922, longitudeDelta: 0.0421 };
 
   const handlePressAddPost = () => {
     if (!selectLocation) {
@@ -62,11 +63,11 @@ const MapHomeScreen = () => {
     if (isUserLocationError) {
       return;
     }
+
     mapRef.current?.animateToRegion({
       latitude: userLocation.latitude,
       longitude: userLocation.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
+      ...defaultRegionDelta,
     });
   };
 
@@ -81,6 +82,10 @@ const MapHomeScreen = () => {
         showsMyLocationButton={false}
         customMapStyle={getMapStyle('light')}
         onLongPress={handleLongPressMapView}
+        region={{
+          ...userLocation,
+          ...defaultRegionDelta,
+        }}
       >
         {markers.map(({ id, color, score, ...coordinate }) => (
           <CustomMarker

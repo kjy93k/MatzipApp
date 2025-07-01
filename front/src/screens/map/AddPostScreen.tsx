@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Image,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -23,6 +25,11 @@ import MarkerSelector from '../../components/MarkerSelector';
 import ScoreInput from '@/components/ScoreInput';
 import DatePickerOption from '@/components/DatePickerOption';
 import useModal from '@/hooks/useModal';
+import ImageInput from '@/components/ImageInput';
+import usePermission from '@/hooks/usePermission';
+import useImagePicker from '@/hooks/useImagePicker';
+import { baseUrl } from '@/api/axios';
+import PreviewImageList from '../../components/PreviewImageList';
 
 type AddPostScreenProps = StackScreenProps<
   MapStackParamList,
@@ -40,13 +47,18 @@ const AddPostScreen = ({ route, navigation }: AddPostScreenProps) => {
     validate: validateAddPost,
   });
   const { location } = route.params;
+  const address = useGetAddress(location);
 
   const [markerColor, setMarkerColor] = useState<MarkerColor>('RED');
   const [score, setScore] = useState(5);
   const [date, setDate] = useState(new Date());
   const dateOption = useModal();
   const [isPicked, setIsPicked] = useState(false);
-  const address = useGetAddress(location);
+  const imagePicker = useImagePicker({
+    initialImages: [],
+  });
+
+  usePermission('PHOTO');
 
   const handleChangeDate = (pickedDate: Date) => {
     setDate(pickedDate);
@@ -128,6 +140,10 @@ const AddPostScreen = ({ route, navigation }: AddPostScreenProps) => {
             onPressMarker={handleSelectMarker}
           />
           <ScoreInput score={score} onChangeScore={handleChangeScore} />
+          <View style={styles.imagesViewer}>
+            <ImageInput onChange={imagePicker.handleChange} />
+            <PreviewImageList imageUris={imagePicker.imageUris} />
+          </View>
           <DatePickerOption
             date={date}
             isVisible={dateOption.isVisible}
@@ -152,6 +168,9 @@ const styles = StyleSheet.create({
   inputContainer: {
     gap: 20,
     marginBottom: 20,
+  },
+  imagesViewer: {
+    flexDirection: 'row',
   },
 });
 
