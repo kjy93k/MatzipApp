@@ -1,3 +1,7 @@
+export const errorMassages = {
+  CANNOT_GET_ADDRESS: '주소를 확인할 수 없습니다.',
+} as const;
+
 export const alerts = {
   LOCATION_PERMISSION: {
     TITLE: '위치 권한이 필요합니다.',

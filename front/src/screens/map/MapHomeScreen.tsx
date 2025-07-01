@@ -20,9 +20,9 @@ import MapView, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useUserLocation from '@/hooks/useUserLocation';
 import usePermission from '@/hooks/usePermission';
+import useGetMarkers from '@/hooks/queries/useGetMarkers';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
 import getMapStyle from '@/style/mapStyle';
 import CustomMarker from '@/components/CustomMarker';
 
@@ -38,6 +38,7 @@ const MapHomeScreen = () => {
   const mapRef = useRef<MapView | null>(null);
   const { userLocation, isUserLocationError } = useUserLocation();
   const [selectLocation, setSelectLocation] = useState<LatLng | null>();
+  const { data: markers = [] } = useGetMarkers();
   usePermission('LOCATION');
 
   const handlePressAddPost = () => {
@@ -81,12 +82,14 @@ const MapHomeScreen = () => {
         customMapStyle={getMapStyle('light')}
         onLongPress={handleLongPressMapView}
       >
-        <CustomMarker
-          coordinate={{
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-          }}
-        />
+        {markers.map(({ id, color, score, ...coordinate }) => (
+          <CustomMarker
+            key={id}
+            color={color}
+            score={score}
+            coordinate={coordinate}
+          />
+        ))}
         {selectLocation && (
           <Callout>
             <CustomMarker coordinate={selectLocation} />

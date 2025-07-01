@@ -4,8 +4,12 @@ import HeaderButton from './HeaderButton';
 
 interface AddPostHeaderRightProps {}
 
-const AddPostHeaderRight = (onSubmit: () => void) => {
-  return <HeaderButton onPress={onSubmit}>등록</HeaderButton>;
+const AddPostHeaderRight = (onSubmit: () => void, hasError?: boolean) => {
+  return (
+    <HeaderButton onPress={onSubmit} hasError={hasError}>
+      등록
+    </HeaderButton>
+  );
 };
 
 const styles = StyleSheet.create({});

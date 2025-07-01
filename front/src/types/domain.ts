@@ -1,4 +1,12 @@
-export type MarkerColor = 'RED' | 'YELLOW' | 'GREEN' | 'BLUE' | 'PURPLE';
+export type MarkerColor = (typeof MarkerColors)[keyof typeof MarkerColors];
+
+export const MarkerColors = {
+  RED: 'RED',
+  YELLOW: 'YELLOW',
+  GREEN: 'GREEN',
+  BLUE: 'BLUE',
+  PURPLE: 'PURPLE',
+} as const;
 
 export type Category = {
   [key in MarkerColor]: string;

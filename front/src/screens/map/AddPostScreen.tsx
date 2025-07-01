@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -16,6 +16,11 @@ import CustomButton from '../../components/CustomButton';
 import useForm from '@/hooks/useForm';
 import { validateAddPost } from '@/\butils';
 import AddPostHeaderRight from '@/components/AddPostHeaderRight';
+import useMutateCreatePost from '@/hooks/queries/useMutateCreatePost';
+import { MarkerColor } from '@/types';
+import useGetAddress from '@/hooks/useGetAddress';
+import MarkerSelector from '../../components/MarkerSelector';
+import ScoreInput from '@/components/ScoreInput';
 
 type AddPostScreenProps = StackScreenProps<
   MapStackParamList,
@@ -24,6 +29,7 @@ type AddPostScreenProps = StackScreenProps<
 
 const AddPostScreen = ({ route, navigation }: AddPostScreenProps) => {
   const descriptionRef = useRef<TextInput | null>(null);
+  const createPost = useMutateCreatePost();
   const addPost = useForm({
     initialValue: {
       title: '',
@@ -32,20 +38,50 @@ const AddPostScreen = ({ route, navigation }: AddPostScreenProps) => {
     validate: validateAddPost,
   });
   const { location } = route.params;
-  const handleSubmit = () => {};
+
+  const [markerColor, setMarkerColor] = useState<MarkerColor>('RED');
+  const [score, setScore] = useState(5);
+  const address = useGetAddress(location);
+
+  const handleSelectMarker = (color: MarkerColor) => {
+    setMarkerColor(color);
+  };
+
+  const handleChangeScore = (score: number) => {
+    setScore(score);
+  };
+
+  const handleSubmit = () => {
+    const body = {
+      date: new Date(),
+      title: addPost.values.title,
+      description: addPost.values.description,
+      color: markerColor,
+      score,
+      imageUris: [],
+    };
+    createPost.mutate(
+      { address, ...location, ...body },
+      {
+        onSuccess: () => navigation.goBack(),
+      },
+    );
+  };
 
   useEffect(() => {
+    const hasError = !!addPost.getTextInputProps('title').error;
+
     navigation.setOptions({
-      headerRight: () => AddPostHeaderRight(handleSubmit),
+      headerRight: () => AddPostHeaderRight(handleSubmit, hasError),
     });
-  }, []);
+  });
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.contentContainer}>
         <View style={styles.inputContainer}>
           <InputField
-            value=""
+            value={address}
             disabled
             icon={
               <Octicons name="location" size={16} color={colors.GRAY_500} />
@@ -68,8 +104,12 @@ const AddPostScreen = ({ route, navigation }: AddPostScreenProps) => {
             {...addPost.getTextInputProps('description')}
           />
         </View>
-        {/* <Text>{location.latitude}</Text> */}
-        {/* <Text>{location.longitude}</Text> */}
+        <MarkerSelector
+          score={score}
+          markerColor={markerColor}
+          onPressMarker={handleSelectMarker}
+        />
+        <ScoreInput score={score} onChangeScore={handleChangeScore} />
       </ScrollView>
     </SafeAreaView>
   );
